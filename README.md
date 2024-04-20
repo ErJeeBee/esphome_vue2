@@ -23,7 +23,8 @@ For issues, please go to [the discussion board](https://github.com/emporia-vue-l
 
 </details>
 
-# Setting up Emporia Vue 2 with ESPHome (Dit is een poging een 3 fasen NL config te maken)
+# Setting up Emporia Vue 2 with ESPHome 
+# (Dit is een eerste poging een 3 fasen NL config te maken)
 
 ![example of hass setup](https://i.imgur.com/hC26j2M.png)
 
