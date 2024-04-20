@@ -347,9 +347,15 @@ sensor:
           name: "Phase B Power Return"
           id: phase_b_power_return
           filters: [*throttle_avg, *invert]  # This measures energy uploaded to grid on phase B
+     - phase_id: phase_c
+        input: "C"  # Verify the CT going to this device input also matches the phase/leg
+        power:
+          name: "Phase C Power Return"
+          id: phase_c_power_return
+          filters: [*throttle_avg, *invert]  # This measures energy uploaded to grid on phase C
   - platform: template
     name: "Total Power Return"
-    lambda: return id(phase_a_power_return).state + id(phase_b_power_return).state;
+    lambda: return id(phase_a_power_return).state + id(phase_b_power_return).state + id(phase_c_power_return).state;
     update_interval: 1s
     id: total_power_return
     device_class: power
