@@ -63,7 +63,7 @@ esphome:
   friendly_name: vue2
 
 external_components:
-  - source: github://emporia-vue-local/esphome@dev
+  - source: github://erjeebee/esphome_vue2@dev
     components:
       - emporia_vue
 
