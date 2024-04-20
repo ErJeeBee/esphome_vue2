@@ -60,7 +60,7 @@ Here's a starting point for a configuration, save it to `<yourfilename>.yaml` in
 ```yaml
 esphome:
   name: emporiavue2
-  friendly_name: vue2
+  friendly_name: EmporiaVue2
 
 external_components:
   - source: github://erjeebee/esphome_vue2@dev
