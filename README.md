@@ -188,6 +188,16 @@ sensor:
         phase_angle:
           name: "Phase B Phase Angle"
           filters: [*throttle_avg, *pos]
+      - id: phase_c  # Verify that this specific phase/leg is connected to correct input wire color on device listed below
+        input: BLUE  # Vue device wire color
+        calibration: 0.022  # 0.022 is used as the default as starting point but may need adjusted to ensure accuracy
+        # To calculate new calibration value use the formula <in-use calibration value> * <accurate voltage> / <reporting voltage>
+        voltage:
+          name: "Phase C Voltage"
+          filters: [*throttle_avg, *pos]
+        phase_angle:
+          name: "Phase C Phase Angle"
+          filters: [*throttle_avg, *pos]
     ct_clamps:
       # Do not specify a name for any of the power sensors here, only an id. This leaves the power sensors internal to ESPHome.
       # Copy sensors will filter and then send power measurements to HA
@@ -202,22 +212,27 @@ sensor:
         power:
           id: phase_b_power
           filters: [*pos]
+      - phase_id: phase_c
+        input: "C"  # Verify the CT going to this device input also matches the phase/leg
+        power:
+          id: phase_c_power
+          filters: [*pos]
       # Pay close attention to set the phase_id for each breaker by matching it to the phase/leg it connects to in the panel
       - { phase_id: phase_a, input:  "1", power: { id:  cir1, filters: [ *pos ] } }
       - { phase_id: phase_b, input:  "2", power: { id:  cir2, filters: [ *pos ] } }
-      - { phase_id: phase_a, input:  "3", power: { id:  cir3, filters: [ *pos ] } }
+      - { phase_id: phase_c, input:  "3", power: { id:  cir3, filters: [ *pos ] } }
       - { phase_id: phase_a, input:  "4", power: { id:  cir4, filters: [ *pos ] } }
-      - { phase_id: phase_a, input:  "5", power: { id:  cir5, filters: [ *pos, multiply: 2 ] } }
-      - { phase_id: phase_a, input:  "6", power: { id:  cir6, filters: [ *pos, multiply: 2 ] } }
-      - { phase_id: phase_a, input:  "7", power: { id:  cir7, filters: [ *pos, multiply: 2 ] } }
+      - { phase_id: phase_b, input:  "5", power: { id:  cir5, filters: [ *pos ] } }
+      - { phase_id: phase_c, input:  "6", power: { id:  cir6, filters: [ *pos ] } }
+      - { phase_id: phase_a, input:  "7", power: { id:  cir7, filters: [ *pos ] } }
       - { phase_id: phase_b, input:  "8", power: { id:  cir8, filters: [ *pos ] } }
-      - { phase_id: phase_b, input:  "9", power: { id:  cir9, filters: [ *pos ] } }
-      - { phase_id: phase_b, input: "10", power: { id: cir10, filters: [ *pos ] } }
-      - { phase_id: phase_a, input: "11", power: { id: cir11, filters: [ *pos, multiply: 2 ] } }
-      - { phase_id: phase_a, input: "12", power: { id: cir12, filters: [ *pos, multiply: 2 ] } }
+      - { phase_id: phase_c, input:  "9", power: { id:  cir9, filters: [ *pos ] } }
+      - { phase_id: phase_a, input: "10", power: { id: cir10, filters: [ *pos ] } }
+      - { phase_id: phase_b, input: "11", power: { id: cir11, filters: [ *pos ] } }
+      - { phase_id: phase_c, input: "12", power: { id: cir12, filters: [ *pos ] } }
       - { phase_id: phase_a, input: "13", power: { id: cir13, filters: [ *pos ] } }
-      - { phase_id: phase_a, input: "14", power: { id: cir14, filters: [ *pos ] } }
-      - { phase_id: phase_b, input: "15", power: { id: cir15, filters: [ *pos ] } }
+      - { phase_id: phase_b, input: "14", power: { id: cir14, filters: [ *pos ] } }
+      - { phase_id: phase_c, input: "15", power: { id: cir15, filters: [ *pos ] } }
       - { phase_id: phase_a, input: "16", power: { id: cir16, filters: [ *pos ] } }
     on_update:
       then:
@@ -226,6 +241,7 @@ sensor:
   # The copy sensors filter and send the power state to HA
   - { platform: copy, name: "Phase A Power", source_id: phase_a_power, filters: *throttle_avg }
   - { platform: copy, name: "Phase B Power", source_id: phase_b_power, filters: *throttle_avg }
+  - { platform: copy, name: "Phase C Power", source_id: phase_c_power, filters: *throttle_avg }
   - { platform: copy, name: "Total Power", source_id: total_power, filters: *throttle_avg }
   - { platform: copy, name: "Balance Power", source_id: balance_power, filters: *throttle_avg }
   - { platform: copy, name:  "Circuit 1 Power", source_id:  cir1, filters: *throttle_avg }
@@ -245,7 +261,7 @@ sensor:
   - { platform: copy, name: "Circuit 15 Power", source_id: cir15, filters: *throttle_avg }
   - { platform: copy, name: "Circuit 16 Power", source_id: cir16, filters: *throttle_avg }
   - platform: template
-    lambda: return id(phase_a_power).state + id(phase_b_power).state;
+    lambda: return id(phase_a_power).state + id(phase_b_power).state + id(phase_c_power).state;
     update_interval: never   # will be updated after all power sensors update via on_update trigger
     id: total_power
     device_class: power
